@@ -40,7 +40,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password can not be null")
-    @Length(min = 6, message = "Password must be at least 6 character")
+    @Length(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
     private String address;
