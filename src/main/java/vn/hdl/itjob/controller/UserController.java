@@ -2,6 +2,7 @@ package vn.hdl.itjob.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +19,20 @@ import vn.hdl.itjob.util.exception.AppException;
 @RequestMapping("/api/v1")
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<RespCreateUserDTO>> createUser(@Valid @RequestBody User reqUser)
             throws AppException {
+        // encode password
+        String hashPassword = this.passwordEncoder.encode(reqUser.getPassword());
+        reqUser.setPassword(hashPassword);
+
         RespCreateUserDTO dto = this.userService.handleCreateUser(reqUser);
         ApiResponse<RespCreateUserDTO> res = ApiResponse.<RespCreateUserDTO>builder()
                 .statusCode(HttpStatus.CREATED.value())

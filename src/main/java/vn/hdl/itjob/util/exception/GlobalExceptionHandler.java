@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,10 +17,12 @@ import vn.hdl.itjob.domain.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({
-            AppException.class
+    @ExceptionHandler(value = {
+            AppException.class,
+            UsernameNotFoundException.class,
+            BadCredentialsException.class
     })
-    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleAppException(Exception ex) {
         ApiResponse<Void> res = new ApiResponse<>();
         res.setMessage("Exception occurs ...");
         res.setError(ex.getMessage());
