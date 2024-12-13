@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,6 +24,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hdl.itjob.util.SecurityUtil;
 import vn.hdl.itjob.util.constant.GenderEnum;
 
 @Entity
@@ -48,6 +50,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
 
     private Instant createdAt;
@@ -71,13 +74,13 @@ public class User {
     /* preprocess */
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "hdl";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse("");
         this.createdAt = Instant.now();
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = "hdl";
-        this.createdAt = Instant.now();
+        updatedBy = SecurityUtil.getCurrentUserLogin().orElse("");
+        updatedAt = Instant.now();
     }
 }

@@ -13,7 +13,7 @@ import vn.hdl.itjob.domain.User;
 import vn.hdl.itjob.domain.response.ApiResponse;
 import vn.hdl.itjob.domain.response.user.RespCreateUserDTO;
 import vn.hdl.itjob.service.UserService;
-import vn.hdl.itjob.util.exception.AppException;
+import vn.hdl.itjob.util.exception.InvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<RespCreateUserDTO>> createUser(@Valid @RequestBody User reqUser)
-            throws AppException {
+            throws InvalidException {
         // encode password
         String hashPassword = this.passwordEncoder.encode(reqUser.getPassword());
         reqUser.setPassword(hashPassword);

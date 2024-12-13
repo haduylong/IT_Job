@@ -20,10 +20,9 @@ public class UserDetailServiceCustom implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        vn.hdl.itjob.domain.User user = this.userRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User with email " + username + " was not found in the database");
-        }
+        vn.hdl.itjob.domain.User user = this.userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User with email " + username + " was not found in the database"));
 
         String role = user.getRole() != null ? user.getRole().getName() : "NULL";
 

@@ -22,7 +22,7 @@ public class RespLoginDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserLogin {
-        private long id;
+        private Long id;
         private String name;
         private String email;
         private Role role;
@@ -36,8 +36,16 @@ public class RespLoginDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserInsideToken {
-        private long id;
+        private Long id;
         private String name;
         private String email;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserAccount {
+        private UserLogin user;
     }
 }

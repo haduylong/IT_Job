@@ -18,7 +18,7 @@ import vn.hdl.itjob.domain.response.ApiResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = {
-            AppException.class,
+            InvalidException.class,
             UsernameNotFoundException.class,
             BadCredentialsException.class
     })

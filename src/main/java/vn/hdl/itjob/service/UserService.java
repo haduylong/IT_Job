@@ -9,7 +9,7 @@ import vn.hdl.itjob.domain.response.user.RespCreateUserDTO;
 import vn.hdl.itjob.repository.CompanyRepository;
 import vn.hdl.itjob.repository.RoleRepository;
 import vn.hdl.itjob.repository.UserRepository;
-import vn.hdl.itjob.util.exception.AppException;
+import vn.hdl.itjob.util.exception.InvalidException;
 
 @Service
 public class UserService {
@@ -24,10 +24,10 @@ public class UserService {
         this.companyRepository = companyRepository;
     }
 
-    public RespCreateUserDTO handleCreateUser(User reqUser) throws AppException {
+    public RespCreateUserDTO handleCreateUser(User reqUser) throws InvalidException {
         // ==> check if email exist
         if (this.userRepository.existsByEmail(reqUser.getEmail())) {
-            throw new AppException("Email " + reqUser.getEmail() + " is exist");
+            throw new InvalidException("Email " + reqUser.getEmail() + " is exist");
         }
 
         // ==> get role
