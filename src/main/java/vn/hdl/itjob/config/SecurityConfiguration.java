@@ -36,6 +36,7 @@ public class SecurityConfiguration {
     private String jwtKey;
 
     String[] whiteList = {
+            "/**",
             "/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/auth/**",
             "/api/v1/public"
     };
@@ -45,6 +46,7 @@ public class SecurityConfiguration {
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         (authorize) -> authorize
                                 .requestMatchers(whiteList).permitAll()

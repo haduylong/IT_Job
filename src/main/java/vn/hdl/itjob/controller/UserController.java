@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -91,7 +90,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@RequestParam("id") Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable("id") Long id) {
         this.userService.handleDeleteUser(id);
         ApiResponse<Void> res = ApiResponse.<Void>builder()
                 .statusCode(HttpStatus.OK.value())
