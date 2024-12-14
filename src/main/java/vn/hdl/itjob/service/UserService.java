@@ -1,14 +1,12 @@
 package vn.hdl.itjob.service;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Valid;
 import vn.hdl.itjob.domain.Company;
 import vn.hdl.itjob.domain.Role;
 import vn.hdl.itjob.domain.User;
@@ -19,7 +17,6 @@ import vn.hdl.itjob.domain.response.user.RespUserDTO;
 import vn.hdl.itjob.repository.CompanyRepository;
 import vn.hdl.itjob.repository.RoleRepository;
 import vn.hdl.itjob.repository.UserRepository;
-import vn.hdl.itjob.util.constant.GenderEnum;
 import vn.hdl.itjob.util.exception.InvalidException;
 
 @Service
@@ -157,9 +154,8 @@ public class UserService {
         return dto;
     }
 
-    public ResultPaginationDTO handleGetAllUser(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> pageUser = this.userRepository.findAll(pageable);
+    public ResultPaginationDTO handleGetAllUser(Specification<User> spec, Pageable pageable) {
+        Page<User> pageUser = this.userRepository.findAll(spec, pageable);
 
         ResultPaginationDTO dto = new ResultPaginationDTO();
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();

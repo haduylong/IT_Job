@@ -1,5 +1,7 @@
 package vn.hdl.itjob.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import vn.hdl.itjob.domain.User;
@@ -76,9 +80,8 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllUser(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size) {
-        ResultPaginationDTO dto = this.userService.handleGetAllUser(page, size);
+            @Filter Specification<User> spec, Pageable pageable) {
+        ResultPaginationDTO dto = this.userService.handleGetAllUser(spec, pageable);
         ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Get all user successful")
