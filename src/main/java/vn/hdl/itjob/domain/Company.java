@@ -15,8 +15,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hdl.itjob.util.SecurityUtil;
 
 @Entity
 @Table(name = "companies")
@@ -27,8 +29,10 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Company's name can not be null")
     private String name;
     private String logo;
+    @NotBlank(message = "Company's address can not be null")
     private String address;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
@@ -50,13 +54,13 @@ public class Company {
     /* preprocess */
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "hdl";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse("");
         this.createdAt = Instant.now();
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = "hdl";
-        this.createdAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().orElse("");
+        this.updatedAt = Instant.now();
     }
 }
