@@ -1,14 +1,11 @@
 package vn.hdl.itjob.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hdl.itjob.domain.Company;
-import vn.hdl.itjob.domain.User;
 import vn.hdl.itjob.domain.response.ResultPaginationDTO;
 import vn.hdl.itjob.repository.CompanyRepository;
 import vn.hdl.itjob.repository.UserRepository;
