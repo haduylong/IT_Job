@@ -85,7 +85,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/companies/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable("id") Long id) throws InvalidException {
         this.companyService.handleDeleteCompany(id);
         ApiResponse<Void> res = ApiResponse.<Void>builder()
                 .statusCode(HttpStatus.OK.value())

@@ -1,21 +1,27 @@
 package vn.hdl.itjob.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hdl.itjob.domain.Company;
+import vn.hdl.itjob.domain.User;
 import vn.hdl.itjob.domain.response.ResultPaginationDTO;
 import vn.hdl.itjob.repository.CompanyRepository;
+import vn.hdl.itjob.repository.UserRepository;
 import vn.hdl.itjob.util.exception.InvalidException;
 
 @Service
 public class CompanyService {
     private CompanyRepository companyRepository;
+    private UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     public Company handleCreateCompany(Company reqCompany) {
@@ -55,7 +61,10 @@ public class CompanyService {
         return dto;
     }
 
-    public void handleDeleteCompany(Long id) {
+    public void handleDeleteCompany(Long id) throws InvalidException {
+        Company company = this.companyRepository.findById(id)
+                .orElseThrow(() -> new InvalidException("Company not found"));
+        this.userRepository.deleteAll(company.getUsers());
         this.companyRepository.deleteById(id);
     }
 }
