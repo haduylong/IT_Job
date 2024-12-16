@@ -36,7 +36,6 @@ public class SecurityConfiguration {
     private String jwtKey;
 
     String[] whiteList = {
-            "/**",
             "/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/auth/**",
             "/api/v1/public"
     };

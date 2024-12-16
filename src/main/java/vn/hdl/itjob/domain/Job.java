@@ -22,8 +22,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hdl.itjob.util.SecurityUtil;
 import vn.hdl.itjob.util.constant.LevelEnum;
 
 @Entity
@@ -34,7 +36,7 @@ public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotBlank(message = "Job's name can not be null")
     private String name;
     private boolean active;
 
@@ -44,6 +46,7 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private LevelEnum level;
 
+    @NotBlank(message = "Job's location can not be null")
     private String location;
     private Integer quantity;
     private Double salary;
@@ -72,13 +75,13 @@ public class Job {
     /* preprocess */
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "hdl";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse("");
         this.createdAt = Instant.now();
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = "hdl";
-        this.createdAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().orElse("");
+        this.updatedAt = Instant.now();
     }
 }
