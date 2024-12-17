@@ -37,7 +37,8 @@ public class SecurityConfiguration {
 
     String[] whiteList = {
             "/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/auth/**",
-            "/api/v1/public"
+            "/api/v1/public/**",
+            "/storage/**"
     };
 
     @Bean

@@ -163,7 +163,7 @@ public class AuthController {
                 RespCreateUserDTO dto = this.userService.handleCreateUser(reqUser);
                 ApiResponse<RespCreateUserDTO> res = ApiResponse.<RespCreateUserDTO>builder()
                                 .statusCode(HttpStatus.OK.value())
-                                .message("Resgister successful")
+                                .message("Register successful")
                                 .data(dto)
                                 .build();
                 return ResponseEntity.ok().body(res);
