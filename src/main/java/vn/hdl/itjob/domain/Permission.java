@@ -14,8 +14,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hdl.itjob.util.SecurityUtil;
 
 @Entity
 @Table(name = "permissions")
@@ -26,9 +28,13 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "name can not be empty")
     private String name;
+    @NotBlank(message = "method can not be empty")
     private String method;
+    @NotBlank(message = "apiPath can not be empty")
     private String apiPath;
+    @NotBlank(message = "module can not be empty")
     private String module;
 
     private Instant createdAt;
@@ -44,13 +50,13 @@ public class Permission {
     /* preprocess */
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "hdl";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse("");
         this.createdAt = Instant.now();
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = "hdl";
-        this.createdAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().orElse("");
+        this.updatedAt = Instant.now();
     }
 }
