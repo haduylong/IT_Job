@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import vn.hdl.itjob.util.SecurityUtil;
 
 @Entity
 @Table(name = "roles")
@@ -57,13 +58,13 @@ public class Role {
     /* preprocess */
     @PrePersist
     public void handleBeforeCreate() {
-        this.createdBy = "hdl";
+        this.createdBy = SecurityUtil.getCurrentUserLogin().orElse("");
         this.createdAt = Instant.now();
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = "hdl";
-        this.createdAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().orElse("");
+        this.updatedAt = Instant.now();
     }
 }
