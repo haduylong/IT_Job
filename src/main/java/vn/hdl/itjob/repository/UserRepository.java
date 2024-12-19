@@ -12,6 +12,8 @@ import vn.hdl.itjob.domain.User;
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     boolean existsByEmail(String email);
 
+    boolean existsByName(String name);
+
     Optional<User> findByEmail(String email);
 
     User findByEmailAndPassword(String email, String password);

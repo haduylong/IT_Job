@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import vn.hdl.itjob.domain.Company;
 import vn.hdl.itjob.domain.Role;
 import vn.hdl.itjob.domain.User;
@@ -19,19 +20,15 @@ import vn.hdl.itjob.repository.CompanyRepository;
 import vn.hdl.itjob.repository.RoleRepository;
 import vn.hdl.itjob.repository.UserRepository;
 import vn.hdl.itjob.util.exception.InvalidException;
+import vn.hdl.itjob.util.mapper.UserMapper;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CompanyRepository companyRepository;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository,
-            CompanyRepository companyRepository) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.companyRepository = companyRepository;
-    }
+    private final UserMapper userMapper;
 
     public RespCreateUserDTO handleCreateUser(User reqUser) throws InvalidException {
         // ==> check if email exist
@@ -85,13 +82,13 @@ public class UserService {
                 .orElseThrow(() -> new InvalidException("User with id = " + reqUser.getId() + " not found"));
 
         // ==> get company
-        if (reqUser.getCompany() != null) {
+        if (reqUser.getCompany() != null && reqUser.getCompany().getId() != null) {
             Company company = this.companyRepository.findById(reqUser.getCompany().getId()).orElse(null);
             userDb.setCompany(company);
         }
 
         // ==> get role
-        if (reqUser.getRole() != null) {
+        if (reqUser.getRole() != null && reqUser.getRole().getId() != null) {
             Role role = this.roleRepository.findById(reqUser.getRole().getId()).orElse(null);
             reqUser.setRole(role);
         }
@@ -167,7 +164,7 @@ public class UserService {
         dto.setMeta(meta);
 
         List<RespUserDTO> userDTOs = pageUser.toList().stream()
-                .map(user -> toRespUserDTO(user)).toList();
+                .map(user -> this.userMapper.toRespUserDTO(user)).toList();
         dto.setResult(userDTOs);
         return dto;
     }

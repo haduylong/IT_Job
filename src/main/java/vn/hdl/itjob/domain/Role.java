@@ -20,7 +20,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.hdl.itjob.util.SecurityUtil;
 
@@ -28,6 +30,8 @@ import vn.hdl.itjob.util.SecurityUtil;
 @Table(name = "roles")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
