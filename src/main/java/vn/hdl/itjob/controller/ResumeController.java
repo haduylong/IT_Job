@@ -28,85 +28,85 @@ import vn.hdl.itjob.util.exception.InvalidException;
 @RestController
 @RequestMapping("/api/v1")
 public class ResumeController {
-    private final ResumeService resumeService;
+        private final ResumeService resumeService;
 
-    public ResumeController(ResumeService resumeService, UserService userService) {
-        this.resumeService = resumeService;
-    }
+        public ResumeController(ResumeService resumeService, UserService userService) {
+                this.resumeService = resumeService;
+        }
 
-    @PostMapping("/resumes")
-    public ResponseEntity<ApiResponse<RespCreateResumeDTO>> createResume(@Valid @RequestBody Resume reqResume)
-            throws InvalidException {
-        RespCreateResumeDTO dto = this.resumeService.handleCreateResume(reqResume);
-        ApiResponse<RespCreateResumeDTO> res = ApiResponse.<RespCreateResumeDTO>builder()
-                .statusCode(HttpStatus.CREATED.value())
-                .message("Create resume successful")
-                .data(dto)
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(res);
-    }
+        @PostMapping("/resumes")
+        public ResponseEntity<ApiResponse<RespCreateResumeDTO>> createResume(@Valid @RequestBody Resume reqResume)
+                        throws InvalidException {
+                RespCreateResumeDTO dto = this.resumeService.handleCreateResume(reqResume);
+                ApiResponse<RespCreateResumeDTO> res = ApiResponse.<RespCreateResumeDTO>builder()
+                                .statusCode(HttpStatus.CREATED.value())
+                                .message("Create resume successful")
+                                .data(dto)
+                                .build();
+                return ResponseEntity.status(HttpStatus.CREATED).body(res);
+        }
 
-    @PutMapping("/resumes")
-    public ResponseEntity<ApiResponse<RespUpdateResumeDTO>> updateResume(@RequestBody Resume reqResume)
-            throws InvalidException {
-        RespUpdateResumeDTO dto = this.resumeService.handleUpdateResume(reqResume);
-        ApiResponse<RespUpdateResumeDTO> res = ApiResponse.<RespUpdateResumeDTO>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Update resume successful")
-                .data(dto)
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(res);
-    }
+        @PutMapping("/resumes")
+        public ResponseEntity<ApiResponse<RespUpdateResumeDTO>> updateResume(@RequestBody Resume reqResume)
+                        throws InvalidException {
+                RespUpdateResumeDTO dto = this.resumeService.handleUpdateResume(reqResume);
+                ApiResponse<RespUpdateResumeDTO> res = ApiResponse.<RespUpdateResumeDTO>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Update resume successful")
+                                .data(dto)
+                                .build();
+                return ResponseEntity.status(HttpStatus.OK).body(res);
+        }
 
-    /*
-     * only company employees can view resumes for company jobs
-     */
-    @GetMapping("/resumes")
-    public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllResume(
-            @Filter Specification<Resume> spec,
-            Pageable pageable) throws InvalidException {
-        ResultPaginationDTO dto = this.resumeService.handleGetAllResume(spec, pageable);
+        /*
+         * only company employees can view resumes for company jobs
+         */
+        @GetMapping("/resumes")
+        public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllResume(
+                        @Filter Specification<Resume> spec,
+                        Pageable pageable) throws InvalidException {
+                ResultPaginationDTO dto = this.resumeService.handleGetAllResume(spec, pageable);
 
-        ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Get all resume successful")
-                .data(dto)
-                .build();
-        return ResponseEntity.ok(res);
-    }
+                ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Get all resume successful")
+                                .data(dto)
+                                .build();
+                return ResponseEntity.ok(res);
+        }
 
-    @GetMapping("/resumes/{id}")
-    public ResponseEntity<ApiResponse<RespFetchResumeDTO>> getResume(@PathVariable("id") Long id)
-            throws InvalidException {
-        RespFetchResumeDTO dto = this.resumeService.handleGetResume(id);
-        ApiResponse<RespFetchResumeDTO> res = ApiResponse.<RespFetchResumeDTO>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Get resume successful")
-                .data(dto)
-                .build();
-        return ResponseEntity.ok(res);
-    }
+        @GetMapping("/resumes/{id}")
+        public ResponseEntity<ApiResponse<RespFetchResumeDTO>> getResume(@PathVariable("id") Long id)
+                        throws InvalidException {
+                RespFetchResumeDTO dto = this.resumeService.handleGetResume(id);
+                ApiResponse<RespFetchResumeDTO> res = ApiResponse.<RespFetchResumeDTO>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Get resume successful")
+                                .data(dto)
+                                .build();
+                return ResponseEntity.ok(res);
+        }
 
-    @DeleteMapping("/resumes/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteResume(@PathVariable("id") Long id)
-            throws InvalidException {
-        this.resumeService.handleDeleteResume(id);
-        ApiResponse<Void> res = ApiResponse.<Void>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Delete resume successful")
-                .build();
-        return ResponseEntity.ok(res);
-    }
+        @DeleteMapping("/resumes/{id}")
+        public ResponseEntity<ApiResponse<Void>> deleteResume(@PathVariable("id") Long id)
+                        throws InvalidException {
+                this.resumeService.handleDeleteResume(id);
+                ApiResponse<Void> res = ApiResponse.<Void>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Delete resume successful")
+                                .build();
+                return ResponseEntity.ok(res);
+        }
 
-    @GetMapping("/resumes/by-user")
-    public ResponseEntity<ApiResponse<ResultPaginationDTO>> getResumeByUser(Pageable pageable)
-            throws InvalidException {
-        ResultPaginationDTO dto = this.resumeService.handleGetResumeByUser(pageable);
-        ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Get resume by user successful")
-                .data(dto)
-                .build();
-        return ResponseEntity.ok(res);
-    }
+        @PostMapping("/resumes/by-user")
+        public ResponseEntity<ApiResponse<ResultPaginationDTO>> getResumeByUser(Pageable pageable)
+                        throws InvalidException {
+                ResultPaginationDTO dto = this.resumeService.handleGetResumeByUser(pageable);
+                ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Get resume by user successful")
+                                .data(dto)
+                                .build();
+                return ResponseEntity.ok(res);
+        }
 }

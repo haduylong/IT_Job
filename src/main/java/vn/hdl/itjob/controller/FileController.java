@@ -1,4 +1,4 @@
-package vn.hdl.itjob.config;
+package vn.hdl.itjob.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import vn.hdl.itjob.service.FileService;
 import vn.hdl.itjob.util.exception.StorageException;
 
 @RestController
-@RequestMapping("/api/v1/public")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class FileController {
     @Value("${hdl.upload-dir.base-uri-path}")

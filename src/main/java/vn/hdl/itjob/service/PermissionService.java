@@ -32,6 +32,14 @@ public class PermissionService {
         Permission permissionDb = this.permissionRepository.findById(reqPermission.getId())
                 .orElseThrow(() -> new InvalidException("Permission not found"));
 
+        // ==> check if permission exist
+        if (this.permissionRepository.existsByModuleAndMethodAndApiPath(
+                reqPermission.getModule(), reqPermission.getMethod(), reqPermission.getApiPath())) {
+            if (permissionDb.getName().equals(reqPermission.getName())) {
+                throw new InvalidException("Permission name already existed");
+            }
+        }
+
         permissionDb.setName(reqPermission.getName());
         permissionDb.setModule(reqPermission.getModule());
         permissionDb.setApiPath(reqPermission.getApiPath());
