@@ -1,4 +1,4 @@
-package vn.hdl.itjob.domain.response;
+package vn.hdl.itjob.domain.response.email;
 
 import java.util.List;
 

@@ -2,13 +2,15 @@ package vn.hdl.itjob.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.hdl.itjob.domain.Job;
 import vn.hdl.itjob.domain.Skill;
 import vn.hdl.itjob.domain.Subscriber;
-import vn.hdl.itjob.domain.response.RespEmailJob;
+import vn.hdl.itjob.domain.response.email.RespEmailJob;
 import vn.hdl.itjob.repository.JobRepository;
 import vn.hdl.itjob.repository.SkillRepository;
 import vn.hdl.itjob.repository.SubscriberRepository;
@@ -76,4 +78,36 @@ public class SubscriberService {
             }
         }
     }
+
+    // #region Send mail pagination
+    public void sendMailSubscriberPaged() {
+        int pageSize = 1; // The number of subscriber per page
+        int currentPage = 0; // Starting page
+        Page<Subscriber> subscriberPage;
+
+        do {
+            // Get the list of subscriber by page
+            subscriberPage = this.subscriberRepository.findAll(PageRequest.of(currentPage, pageSize));
+            List<Subscriber> subscribers = subscriberPage.getContent();
+
+            if (subscribers != null && !subscribers.isEmpty()) {
+                for (Subscriber subscriber : subscribers) {
+                    List<Skill> skills = subscriber.getSkills();
+                    if (skills != null && !skills.isEmpty()) {
+                        List<Job> jobs = this.jobRepository.findBySkillsIn(skills);
+                        List<RespEmailJob> emailJobs = jobs.stream()
+                                .map(job -> emailMapper.toRespEmailJob(job)).toList();
+
+                        if (jobs != null && !jobs.isEmpty()) {
+                            this.emailService.sendEmailFromTemplateSync(subscriber.getEmail(), "Available jobs",
+                                    "job", subscriber.getName(), emailJobs);
+                        }
+                    }
+                }
+            }
+
+            currentPage++; // Go to the next page
+        } while (subscriberPage.hasNext()); // Continue if there are more pages
+    }
+    // #endregion
 }
