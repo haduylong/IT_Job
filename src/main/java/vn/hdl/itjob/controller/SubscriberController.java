@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import vn.hdl.itjob.domain.Subscriber;
 import vn.hdl.itjob.domain.response.ApiResponse;
 import vn.hdl.itjob.service.SubscriberService;
+import vn.hdl.itjob.util.SecurityUtil;
 import vn.hdl.itjob.util.exception.InvalidException;
 
 @RestController
@@ -40,6 +41,20 @@ public class SubscriberController {
         ApiResponse<Subscriber> res = ApiResponse.<Subscriber>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Update subscriber successful")
+                .data(subscriber)
+                .build();
+        return ResponseEntity.ok().body(res);
+    }
+
+    @PostMapping("/subscribers/skills")
+    public ResponseEntity<ApiResponse<Subscriber>> getSubscriberSkills() throws InvalidException {
+        String email = SecurityUtil.getCurrentUserLogin()
+                .orElseThrow(() -> new InvalidException("User unauthenticated"));
+
+        Subscriber subscriber = this.subscriberService.handleGetSubscriber(email);
+        ApiResponse<Subscriber> res = ApiResponse.<Subscriber>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Get subscriber's skills successful")
                 .data(subscriber)
                 .build();
         return ResponseEntity.ok().body(res);

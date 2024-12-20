@@ -110,4 +110,9 @@ public class SubscriberService {
         } while (subscriberPage.hasNext()); // Continue if there are more pages
     }
     // #endregion
+
+    public Subscriber handleGetSubscriber(String email) throws InvalidException {
+        return this.subscriberRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidException("Subscriber email " + email + " not fonud"));
+    }
 }
