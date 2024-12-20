@@ -5,17 +5,24 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import vn.hdl.itjob.domain.Job;
 import vn.hdl.itjob.domain.Skill;
 import vn.hdl.itjob.domain.Subscriber;
+import vn.hdl.itjob.domain.response.RespEmailJob;
+import vn.hdl.itjob.repository.JobRepository;
 import vn.hdl.itjob.repository.SkillRepository;
 import vn.hdl.itjob.repository.SubscriberRepository;
 import vn.hdl.itjob.util.exception.InvalidException;
+import vn.hdl.itjob.util.mapper.EmailMapper;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriberService {
     private final SubscriberRepository subscriberRepository;
     private final SkillRepository skillRepository;
+    private final JobRepository jobRepository;
+    private final EmailService emailService;
+    private final EmailMapper emailMapper;
 
     public Subscriber handleCreateSubscriber(Subscriber reqSubscriber) throws InvalidException {
         // ==> check if subscriber email existed
@@ -47,5 +54,26 @@ public class SubscriberService {
         }
 
         return this.subscriberRepository.save(subscriberDb);
+    }
+
+    public void sendMailSubscriber() {
+        // subscribers -> skills -> jobs in skills
+        List<Subscriber> subscribers = this.subscriberRepository.findAll();
+        if (subscribers != null && subscribers.size() > 0) {
+            for (Subscriber subscriber : subscribers) {
+                List<Skill> skills = subscriber.getSkills();
+                if (skills != null && skills.size() > 0) {
+                    List<Job> jobs = this.jobRepository.findBySkillsIn(skills);
+                    List<RespEmailJob> emailJobs = jobs.stream()
+                            .map(job -> emailMapper.toRespEmailJob(job)).toList();
+
+                    if (jobs != null && jobs.size() > 0) {
+                        this.emailService.sendEmailFromTemplateSync(subscriber.getEmail(), "Available jobs",
+                                "job", subscriber.getName(), emailJobs);
+                    }
+                }
+
+            }
+        }
     }
 }

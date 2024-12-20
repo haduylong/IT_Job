@@ -1,0 +1,30 @@
+package vn.hdl.itjob.domain.response;
+
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class RespEmailJob {
+    private String name;
+    private Double salary;
+    private CompanyEmail company;
+    private List<SkillEmail> skills;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class CompanyEmail {
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class SkillEmail {
+        private String name;
+    }
+}
