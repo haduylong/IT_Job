@@ -17,6 +17,17 @@ import vn.hdl.itjob.domain.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler({
+            Exception.class
+    }) // handle all exception
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        ApiResponse<Void> res = new ApiResponse<>();
+        res.setMessage("Internal Server Error");
+        res.setError(ex.getMessage());
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
     @ExceptionHandler(value = {
             InvalidException.class,
             UsernameNotFoundException.class,
