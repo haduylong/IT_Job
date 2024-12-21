@@ -37,3 +37,4 @@ volumes:
   db:
 
     # docker compose up -d
+    # refer to https://www.bezkoder.com/docker-compose-spring-boot-mysql/
