@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -99,6 +100,8 @@ public class SecurityUtil {
             return jwt.getSubject();
         } else if (authentication.getPrincipal() instanceof String s) {
             return s;
+        } else if (authentication.getPrincipal() instanceof OidcUser oidcUser) {
+            return oidcUser.getEmail();
         }
         return null;
     }

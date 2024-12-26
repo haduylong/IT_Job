@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,7 @@ import com.nimbusds.jose.util.Base64;
 import vn.hdl.itjob.util.SecurityUtil;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
     private final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
@@ -37,14 +39,13 @@ public class SecurityConfiguration {
     private String jwtKey;
 
     String[] whiteList = {
-            "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/register",
+            "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/register", "/api/v1/auth/google",
             "/api/v1/public/**",
             "/api/v1/emails",
             "/storage/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/swagger-ui.html"
-
+            "/swagger-ui.html",
     };
 
     @Bean
@@ -55,6 +56,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         (authorize) -> authorize
+                                .requestMatchers("/login", "/oauth2/**").permitAll()
                                 .requestMatchers(whiteList).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/skills/**").permitAll()
@@ -64,7 +66,10 @@ public class SecurityConfiguration {
                         (oauth2) -> oauth2
                                 .jwt(Customizer.withDefaults())
                                 .authenticationEntryPoint(customAuthenticationEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                // .oauth2Login(oauth -> oauth.defaultSuccessUrl("/api/v1/auth/google", true))
+                .oauth2Login(Customizer.withDefaults())
+                .logout(logout -> logout.logoutSuccessUrl("/login"))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         return http.build();
     }
 
@@ -91,6 +96,7 @@ public class SecurityConfiguration {
                 .macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
         return token -> {
             try {
+                log.info(">>> Token = {}", token);
                 return jwtDecoder.decode(token);
             } catch (Exception e) {
                 log.error("JwtDecoder error {}", e.getMessage());

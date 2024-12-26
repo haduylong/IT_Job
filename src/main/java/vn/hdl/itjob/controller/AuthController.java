@@ -1,5 +1,7 @@
 package vn.hdl.itjob.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import vn.hdl.itjob.domain.User;
 import vn.hdl.itjob.domain.request.ReqLoginDTO;
 import vn.hdl.itjob.domain.response.ApiResponse;
@@ -31,6 +36,7 @@ import vn.hdl.itjob.util.exception.InvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class AuthController {
         @Value("${hdl.jwt.refresh-token-expiration-in-seconds}")
         private long refreshTokenExpiration;
@@ -40,18 +46,6 @@ public class AuthController {
         private final AuthenticationManagerBuilder authenticationManagerBuilder;
         private final UserService userService;
         private final PasswordEncoder passwordEncoder;
-
-        public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder,
-                        UserRepository userRepository,
-                        SecurityUtil securityUtil,
-                        UserService userService,
-                        PasswordEncoder passwordEncoder) {
-                this.userRepository = userRepository;
-                this.securityUtil = securityUtil;
-                this.authenticationManagerBuilder = authenticationManagerBuilder;
-                this.userService = userService;
-                this.passwordEncoder = passwordEncoder;
-        }
 
         @PostMapping("/auth/login")
         public ResponseEntity<ApiResponse<RespLoginDTO>> login(@Valid @RequestBody ReqLoginDTO loginDTO)
@@ -213,4 +207,33 @@ public class AuthController {
                                 .header(HttpHeaders.SET_COOKIE, springCookie.toString())
                                 .body(res);
         }
+
+        // @GetMapping("/auth/google")
+        // public ResponseEntity<ApiResponse<User>> googleLogin(@AuthenticationPrincipal
+        // OidcUser oidcUser) {
+        // String email = oidcUser.getEmail();
+        // User user = this.userRepository.findByEmail(email).orElse(null);
+
+        // HttpStatus statusCode = HttpStatus.OK;
+        // String message = "Login successfully";
+        // // if user does not exist => create
+        // if (user == null) {
+        // user = new User();
+        // user.setName(oidcUser.getFullName());
+        // user.setEmail(oidcUser.getEmail());
+        // user.setPassword("GOOGLE_OAUTH2");
+
+        // user = this.userRepository.save(user);
+        // statusCode = HttpStatus.CREATED;
+        // message = "Create new user and register successfully";
+        // }
+
+        // ApiResponse<User> res = ApiResponse.<User>builder()
+        // .statusCode(statusCode.value())
+        // .message(message)
+        // .data(user)
+        // .build();
+
+        // return ResponseEntity.status(statusCode).body(res);
+        // }
 }
