@@ -11,29 +11,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.hdl.itjob.domain.Company;
 import vn.hdl.itjob.domain.response.ApiResponse;
 import vn.hdl.itjob.domain.response.ResultPaginationDTO;
+import vn.hdl.itjob.service.CompanyRedisService;
 import vn.hdl.itjob.service.CompanyService;
 import vn.hdl.itjob.util.exception.InvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
 @Slf4j
+@RequiredArgsConstructor
 public class CompanyController {
     // private final Logger log = LoggerFactory.getLogger(CompanyController.class);
 
-    private CompanyService companyService;
-
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
+    private final CompanyService companyService;
+    private final CompanyRedisService companyRedisService;
 
     @PostMapping("/companies")
     public ResponseEntity<ApiResponse<Company>> createCompany(@Valid @RequestBody Company reqCompany) {
@@ -73,9 +76,20 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllCompany(
+            @RequestParam(value = "filter", required = false) String filter,
             @Filter Specification<Company> spec,
-            Pageable pageable) {
-        ResultPaginationDTO dto = this.companyService.handleGetAllCompany(spec, pageable);
+            Pageable pageable) throws JsonMappingException, JsonProcessingException {
+        // generate key
+        String key = String.format("companies:spec=%s:page=%d:size=%d:sort=%s", filter,
+                pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort().toString());
+        // check value in redis
+        ResultPaginationDTO dto = this.companyRedisService.getAllCompanies(key);
+        if (dto == null) {
+            // fetch from database and save to redis
+            dto = this.companyService.handleGetAllCompany(spec, pageable);
+            this.companyRedisService.saveAllCompanies(key, dto);
+        }
+
         ApiResponse<ResultPaginationDTO> res = ApiResponse.<ResultPaginationDTO>builder()
                 .statusCode(HttpStatus.OK.value())
                 .message("Get all company successful")

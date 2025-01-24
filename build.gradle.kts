@@ -31,6 +31,11 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.4.1")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.data:spring-data-redis:3.4.1")
+	implementation("io.lettuce:lettuce-core:6.5.2.RELEASE")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+
 	implementation("com.turkraft.springfilter:jpa:3.1.7")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	implementation("org.mapstruct:mapstruct:1.6.3")
